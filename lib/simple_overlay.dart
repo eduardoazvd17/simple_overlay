@@ -3,7 +3,6 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 
 class SimpleOverlay {
-  final String tag;
   final BuildContext context;
   final Widget overlay;
   final bool hideOnTapOutside;
@@ -19,14 +18,13 @@ class SimpleOverlay {
   bool get isVisible => _isVisible;
 
   SimpleOverlay({
-    bool startShowing = false,
-    required this.tag,
     required this.context,
     required this.overlay,
     this.hideOnTapOutside = true,
     this.onShow,
     this.onHide,
     this.onTapOutside,
+    bool startShowing = false,
     double? top,
     double? left,
     double? bottom,
@@ -61,7 +59,7 @@ class SimpleOverlay {
         onShow?.call();
       });
     } catch (_) {
-      developer.log("Error on show overlay $tag", name: "simple_overlay");
+      developer.log("Error on show overlay", name: "simple_overlay");
     }
   }
 
@@ -71,7 +69,7 @@ class SimpleOverlay {
       _overlayEntry.remove();
       onHide?.call();
     } catch (e) {
-      developer.log("Error on hide overlay $tag", name: "simple_overlay");
+      developer.log("Error on hide overlay", name: "simple_overlay");
     }
   }
 }

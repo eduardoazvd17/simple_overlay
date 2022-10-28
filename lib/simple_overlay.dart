@@ -71,10 +71,7 @@ class SimpleOverlay {
       _overlayEntry.remove();
       onHide?.call();
     } catch (e) {
-      developer.log(
-        "Error on hide overlay $tag",
-        name: "simple_overlay",
-      );
+      developer.log("Error on hide overlay $tag", name: "simple_overlay");
     }
   }
 }

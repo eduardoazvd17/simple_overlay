@@ -33,7 +33,6 @@ class SimpleOverlay {
 
       _overlayState = Overlay.of(context)!;
       _overlayEntry = OverlayEntry(builder: (contextBuilder) {
-        //final renderBox = context.findRenderObject() as RenderBox;
         return Stack(
           children: [
             GestureDetector(

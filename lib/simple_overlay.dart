@@ -26,6 +26,11 @@ class SimpleOverlay {
     this.onHide = onHide;
     try {
       _hideOverlay(log: false);
+
+      final RenderBox renderBox = context.findRenderObject() as RenderBox;
+      final Size size = renderBox.size;
+      final Offset offset = renderBox.localToGlobal(Offset.zero);
+
       _overlayState = Overlay.of(context)!;
       _overlayEntry = OverlayEntry(builder: (contextBuilder) {
         //final renderBox = context.findRenderObject() as RenderBox;
@@ -35,10 +40,13 @@ class SimpleOverlay {
               onTap: hideOnTapOutside ? () => hide() : null,
             ),
             Positioned(
-              top: top,
-              left: left,
-              bottom: bottom,
-              right: right,
+              top: bottom != null
+                  ? offset.dy + size.height - (bottom * 10)
+                  : bottom,
+              left:
+                  right != null ? offset.dx + size.width - (right * 10) : right,
+              bottom: top != null ? offset.dy - size.height - (top * 10) : top,
+              right: left != null ? offset.dx + size.width - (left * 10) : left,
               child: overlay,
             ),
           ],

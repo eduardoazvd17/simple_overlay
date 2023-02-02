@@ -3,11 +3,11 @@ import 'package:simple_overlay/controllers/simple_overlay_controller.dart';
 
 import '../models/simple_overlay_position.dart';
 
-class SimpleOverlayWidget extends StatelessWidget {
+class SimpleOverlayWidget extends StatefulWidget {
   final BuildContext context;
   final SimpleOverlayController controller;
   final Widget child;
-  final SimpleOverlayPosition? position;
+  final SimpleOverlayPosition position;
   final Widget overlayWidget;
   final bool hideOnTapOutside;
 
@@ -16,23 +16,28 @@ class SimpleOverlayWidget extends StatelessWidget {
     required this.context,
     required this.controller,
     required this.child,
-    this.position,
+    required this.position,
     required this.overlayWidget,
     this.hideOnTapOutside = false,
   });
 
   @override
+  State<SimpleOverlayWidget> createState() => _SimpleOverlayWidgetState();
+}
+
+class _SimpleOverlayWidgetState extends State<SimpleOverlayWidget> {
+  @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      OverlayState? state = _buildOverlayState(context);
-      OverlayEntry? entry = _buildOverlayEntry(
+      OverlayState state = _buildOverlayState(context);
+      OverlayEntry entry = _buildOverlayEntry(
         context: context,
-        overlayWidget: overlayWidget,
-        hideOnTapOutside: hideOnTapOutside,
+        overlayWidget: widget.overlayWidget,
+        hideOnTapOutside: widget.hideOnTapOutside,
       );
 
-      controller.state.addListener(() {
-        if (controller.state.value) {
+      widget.controller.state.addListener(() {
+        if (widget.controller.state.value) {
           _showOverlay(state, entry);
         } else {
           _hideOverlay(entry);
@@ -40,15 +45,15 @@ class SimpleOverlayWidget extends StatelessWidget {
       });
     });
 
-    return child;
+    return widget.child;
   }
 
-  void _showOverlay(OverlayState? state, OverlayEntry? entry) {
-    if (state != null && entry != null) state.insert(entry);
+  void _showOverlay(OverlayState state, OverlayEntry entry) {
+    state.insert(entry);
   }
 
-  void _hideOverlay(OverlayEntry? entry) {
-    if (entry != null) entry.remove();
+  void _hideOverlay(OverlayEntry entry) {
+    entry.remove();
   }
 
   OverlayState _buildOverlayState(BuildContext context) {
@@ -60,8 +65,7 @@ class SimpleOverlayWidget extends StatelessWidget {
     required Widget overlayWidget,
     required bool hideOnTapOutside,
   }) {
-    final RenderBox? renderBox = (context.findRenderObject() ??
-        this.context.findRenderObject()) as RenderBox?;
+    final RenderBox? renderBox = context.findRenderObject() as RenderBox?;
     assert(renderBox != null);
 
     final Size size = renderBox!.size;
@@ -71,25 +75,31 @@ class SimpleOverlayWidget extends StatelessWidget {
       return Stack(
         children: [
           GestureDetector(
-            onTap: hideOnTapOutside ? () => controller.hide() : null,
+            onTap: hideOnTapOutside ? widget.controller.hide : null,
           ),
           Positioned(
-            top: position?.bottom != null
-                ? offset.dy + size.height - (position!.bottom! * 10)
-                : position?.bottom,
-            left: position?.right != null
-                ? offset.dx + size.width - (position!.right! * 10)
-                : position?.right,
-            bottom: position?.top != null
-                ? offset.dy - size.height - (position!.top! * 10)
-                : position?.top,
-            right: position?.left != null
-                ? offset.dx + size.width - (position!.left! * 10)
-                : position?.left,
+            top: widget.position.bottom != null
+                ? (offset.dy + size.height) - (widget.position.bottom!)
+                : null,
+            left: widget.position.right != null
+                ? (offset.dx + size.width) - (widget.position.right!)
+                : null,
+            bottom: widget.position.top != null
+                ? (offset.dy - size.height) - (widget.position.top!)
+                : null,
+            right: widget.position.left != null
+                ? (offset.dx + size.width) - (widget.position.left!)
+                : null,
             child: overlayWidget,
           ),
         ],
       );
     });
+  }
+
+  @override
+  void dispose() {
+    widget.controller.state.dispose();
+    super.dispose();
   }
 }

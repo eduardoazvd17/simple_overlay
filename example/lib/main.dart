@@ -7,8 +7,7 @@ void main() {
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
-  final overlayController1 = SimpleOverlayController();
-  final overlayController2 = SimpleOverlayController();
+  final overlayController = SimpleOverlayController();
 
   @override
   Widget build(BuildContext context) {
@@ -22,77 +21,70 @@ class HomePage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               ElevatedButton(
-                onPressed: overlayController1.show,
-                child: const Text('Show overlay #1'),
-              ),
-              ElevatedButton(
-                onPressed: overlayController2.show,
-                child: const Text('Show overlay #2'),
+                onPressed: overlayController.show,
+                child: const Text("Show overlay's"),
               ),
             ],
           ),
-          SimpleOverlayWidget(
-            context: context,
-            controller: overlayController1,
-            hideOnTapOutside: false,
-            position: SimpleOverlayPosition.topLeft(),
-            overlayWidget: _overlayWidget1,
-            child: Container(
-              height: 100,
-              width: 80,
-              color: Colors.red,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              SimpleOverlayWidget(
+                context: context,
+                controller: overlayController,
+                hideOnTapOutside: false,
+                position: SimpleOverlayPosition.topRight(),
+                overlayWidget: _overlayWidget,
+                child: const Text('top right'),
+              ),
+              SimpleOverlayWidget(
+                context: context,
+                controller: overlayController,
+                hideOnTapOutside: false,
+                position: SimpleOverlayPosition.bottomRight(),
+                overlayWidget: _overlayWidget,
+                child: const Text('bottom right'),
+              ),
+            ],
           ),
-          SimpleOverlayWidget(
-            context: context,
-            controller: overlayController2,
-            hideOnTapOutside: false,
-            position: SimpleOverlayPosition.bottomRight(),
-            overlayWidget: _overlayWidget2,
-            child: Container(
-              height: 80,
-              width: 100,
-              color: Colors.green,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              SimpleOverlayWidget(
+                context: context,
+                controller: overlayController,
+                hideOnTapOutside: false,
+                position: SimpleOverlayPosition.topLeft(),
+                overlayWidget: _overlayWidget,
+                child: const Text('top left'),
+              ),
+              SimpleOverlayWidget(
+                context: context,
+                controller: overlayController,
+                hideOnTapOutside: false,
+                position: SimpleOverlayPosition.bottomLeft(),
+                overlayWidget: _overlayWidget,
+                child: const Text('bottom left'),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 
-  Widget get _overlayWidget1 {
+  Widget get _overlayWidget {
     return Card(
       elevation: 8.0,
       child: Padding(
         padding: const EdgeInsets.all(10),
         child: Row(
           children: [
-            const Text('Overlay #1'),
+            const Text('Hello im a overlay widget'),
             Padding(
               padding: const EdgeInsets.all(5.0),
               child: InkWell(
-                onTap: overlayController1.hide,
-                child: const Icon(Icons.close),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget get _overlayWidget2 {
-    return Card(
-      elevation: 8.0,
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Row(
-          children: [
-            const Text('Overlay #2'),
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: InkWell(
-                onTap: overlayController2.hide,
+                onTap: overlayController.hide,
                 child: const Icon(Icons.close),
               ),
             ),

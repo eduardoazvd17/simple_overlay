@@ -71,6 +71,10 @@ class _SimpleOverlayWidgetState extends State<SimpleOverlayWidget> {
     final Size size = renderBox!.size;
     final Offset offset = renderBox.localToGlobal(Offset.zero);
 
+    /// Screen size
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
+
     /// Child position (center)
     final double y = (offset.dy + (size.height / 2));
     final double x = (offset.dx + (size.width / 2));
@@ -82,16 +86,18 @@ class _SimpleOverlayWidgetState extends State<SimpleOverlayWidget> {
             onTap: hideOnTapOutside ? widget.controller.hide : null,
           ),
           Positioned(
-            top: widget.position.top != null
-                ? (y - (size.height / 2) - widget.position.top!)
-                : widget.position.bottom != null
-                    ? (y + (size.height / 2) + widget.position.bottom!)
-                    : null,
-            left: widget.position.left != null
-                ? (x - (size.width / 2) - widget.position.left!)
-                : widget.position.right != null
-                    ? (x + (size.width / 2) + widget.position.right!)
-                    : null,
+            top: widget.position.bottom != null
+                ? (y + (size.height / 2) + widget.position.bottom!)
+                : null,
+            left: widget.position.right != null
+                ? (x + (size.width / 2) + widget.position.right!)
+                : null,
+            right: widget.position.left != null
+                ? (screenWidth - x + (size.width / 2) + widget.position.left!)
+                : null,
+            bottom: widget.position.top != null
+                ? (screenHeight - y + (size.height / 2) + widget.position.top!)
+                : null,
             child: overlayWidget,
           ),
         ],

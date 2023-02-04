@@ -26,21 +26,27 @@ class SimpleOverlayWidget extends StatefulWidget {
 }
 
 class _SimpleOverlayWidgetState extends State<SimpleOverlayWidget> {
+  OverlayState? state;
+  OverlayEntry? entry;
+
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      OverlayState state = _buildOverlayState(context);
-      OverlayEntry entry = _buildOverlayEntry(
+      state = _buildOverlayState(context);
+      entry = _buildOverlayEntry(
         context: context,
         overlayWidget: widget.overlayWidget,
         hideOnTapOutside: widget.hideOnTapOutside,
       );
 
+      assert(state != null);
+      assert(entry != null);
+
       widget.controller.state.addListener(() {
         if (widget.controller.state.value) {
-          _showOverlay(state, entry);
+          _showOverlay(state!, entry!);
         } else {
-          _hideOverlay(entry);
+          _hideOverlay(entry!);
         }
       });
     });
@@ -49,11 +55,14 @@ class _SimpleOverlayWidgetState extends State<SimpleOverlayWidget> {
   }
 
   void _showOverlay(OverlayState state, OverlayEntry entry) {
+    _hideOverlay(entry);
     state.insert(entry);
   }
 
   void _hideOverlay(OverlayEntry entry) {
-    entry.remove();
+    try {
+      entry.remove();
+    } catch (_) {}
   }
 
   OverlayState _buildOverlayState(BuildContext context) {
@@ -68,14 +77,13 @@ class _SimpleOverlayWidgetState extends State<SimpleOverlayWidget> {
     final RenderBox? renderBox = context.findRenderObject() as RenderBox?;
     assert(renderBox != null);
 
-    final Size size = renderBox!.size;
-    final Offset offset = renderBox.localToGlobal(Offset.zero);
-
     /// Screen size
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
 
     /// Child position (center)
+    final Size size = renderBox!.size;
+    final Offset offset = renderBox.localToGlobal(Offset.zero);
     final double y = (offset.dy + (size.height / 2));
     final double x = (offset.dx + (size.width / 2));
 
@@ -107,6 +115,9 @@ class _SimpleOverlayWidgetState extends State<SimpleOverlayWidget> {
 
   @override
   void dispose() {
+    if (entry != null) {
+      _hideOverlay(entry!);
+    }
     widget.controller.state.dispose();
     super.dispose();
   }

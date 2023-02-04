@@ -47,7 +47,7 @@ class HomePage extends StatelessWidget {
             context: context,
             controller: overlayController2,
             hideOnTapOutside: false,
-            position: SimpleOverlayPosition.topRight(),
+            position: SimpleOverlayPosition.bottomRight(),
             overlayWidget: _overlayWidget2,
             child: Container(
               height: 80,

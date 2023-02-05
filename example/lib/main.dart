@@ -48,30 +48,16 @@ class HomePage extends StatelessWidget {
         ),
       );
 
-  Widget get _child => ValueListenableBuilder(
-        valueListenable: controller.state,
-        builder: (context, value, _) {
-          if (value) {
-            return ElevatedButton(
-              onPressed: controller.hide,
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(
-                  Colors.red,
-                ),
-              ),
-              child: const Text("Close"),
-            );
-          } else {
-            return ElevatedButton(
-              onPressed: controller.show,
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(
-                  Colors.green,
-                ),
-              ),
-              child: const Text("Open"),
-            );
-          }
-        },
-      );
+  Widget get _child {
+    return ElevatedButton(
+      onPressed: () {
+        if (controller.state.value) {
+          controller.hide();
+        } else {
+          controller.show();
+        }
+      },
+      child: const Text("Show / Hide"),
+    );
+  }
 }

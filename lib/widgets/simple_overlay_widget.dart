@@ -8,8 +8,6 @@ class SimpleOverlayWidget extends StatefulWidget {
   final SimpleOverlayPosition position;
   final Widget overlayWidget;
   final SimpleOverlayConfiguration? configuration;
-  final VoidCallback? onShowOverlay;
-  final VoidCallback? onHideOverlay;
 
   const SimpleOverlayWidget({
     super.key,
@@ -19,8 +17,6 @@ class SimpleOverlayWidget extends StatefulWidget {
     required this.position,
     required this.overlayWidget,
     this.configuration,
-    this.onShowOverlay,
-    this.onHideOverlay,
   });
 
   @override
@@ -76,7 +72,7 @@ class _SimpleOverlayWidgetState extends State<SimpleOverlayWidget> {
     _hideOverlay(entry);
     state.insert(entry);
 
-    widget.onShowOverlay?.call();
+    configuration.onShowOverlay?.call();
 
     if (configuration.autoHideDuration != null) {
       Future.delayed(configuration.autoHideDuration!).then(
@@ -88,7 +84,7 @@ class _SimpleOverlayWidgetState extends State<SimpleOverlayWidget> {
   void _hideOverlay(OverlayEntry entry) {
     try {
       entry.remove();
-      widget.onHideOverlay?.call();
+      configuration.onHideOverlay?.call();
     } catch (_) {}
   }
 

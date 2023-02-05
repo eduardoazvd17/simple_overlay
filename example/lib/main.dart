@@ -18,18 +18,18 @@ class HomePage extends StatelessWidget {
         child: SimpleOverlayWidget(
           context: context,
           controller: controller,
-          onShowOverlay: () {
-            // ignore: avoid_print
-            print('onShowOverlay');
-          },
-          onHideOverlay: () {
-            // ignore: avoid_print
-            print('onHideOverlay');
-          },
           configuration: SimpleOverlayConfiguration(
             startShowing: false,
             hideOnTapOutside: false,
             autoHideDuration: null,
+            onShowOverlay: () {
+              // ignore: avoid_print
+              print('onShowOverlay');
+            },
+            onHideOverlay: () {
+              // ignore: avoid_print
+              print('onHideOverlay');
+            },
           ),
           position: SimpleOverlayPosition.bottomRight(),
           overlayWidget: _overlayWidget,

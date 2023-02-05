@@ -20,8 +20,10 @@ class HomePage extends StatelessWidget {
           controller: controller,
           configuration: SimpleOverlayConfiguration(
             startShowing: false,
-            hideOnTapOutside: false,
+            hideOnTapOutside: true,
             autoHideDuration: null,
+            shadowColor: Colors.black,
+            shadowOpacity: 0.5,
             onShowOverlay: () {
               // ignore: avoid_print
               print('onShowOverlay');
@@ -31,7 +33,7 @@ class HomePage extends StatelessWidget {
               print('onHideOverlay');
             },
           ),
-          position: SimpleOverlayPosition.bottomRight(),
+          position: SimpleOverlayPosition.topLeft(),
           overlayWidget: _overlayWidget,
           child: _child,
         ),

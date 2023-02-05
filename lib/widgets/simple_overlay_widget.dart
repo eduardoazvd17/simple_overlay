@@ -45,7 +45,6 @@ class _SimpleOverlayWidgetState extends State<SimpleOverlayWidget> {
       entry = _buildOverlayEntry(
         context: context,
         overlayWidget: widget.overlayWidget,
-        hideOnTapOutside: configuration.hideOnTapOutside,
       );
 
       assert(state != null);
@@ -95,7 +94,6 @@ class _SimpleOverlayWidgetState extends State<SimpleOverlayWidget> {
   OverlayEntry _buildOverlayEntry({
     required BuildContext context,
     required Widget overlayWidget,
-    required bool hideOnTapOutside,
   }) {
     final RenderBox? renderBox = context.findRenderObject() as RenderBox?;
     assert(renderBox != null);
@@ -114,7 +112,14 @@ class _SimpleOverlayWidgetState extends State<SimpleOverlayWidget> {
       return Stack(
         children: [
           GestureDetector(
-            onTap: hideOnTapOutside ? controller.hide : null,
+            onTap: configuration.hideOnTapOutside ? controller.hide : null,
+            child: configuration.shadowOpacity != null
+                ? Container(
+                    color: configuration.shadowColor.withOpacity(
+                      configuration.shadowOpacity!,
+                    ),
+                  )
+                : null,
           ),
           Positioned(
             top: widget.position.bottom != null

@@ -11,29 +11,23 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/developing-packages).
 -->
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+# simple_overlay
+The simple and easy overlay package. With it, you can overlay a custom widget on any other widget.
 
 ## Features
-
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+- Custom widget overlay;
+- Auto show on build;
+- Auto hide by duration;
+- Hide on tap outside overlay;
+- Controller with show/hide functions;
+- Custom background shadow color/opacity;
 
 ## Getting started
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+TODO: Coming soon...
 
 ## Usage
-
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
-
 ```dart
+// TODO: Coming soon...
 const like = 'sample';
 ```
-
-## Additional information
-
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.

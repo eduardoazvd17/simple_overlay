@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:simple_overlay/controllers/simple_overlay_controller.dart';
-
-import '../models/simple_overlay_position.dart';
+import '../simple_overlay.dart';
 
 class SimpleOverlayWidget extends StatefulWidget {
   final BuildContext context;
-  final SimpleOverlayController controller;
+  final SimpleOverlayController? controller;
   final Widget child;
   final SimpleOverlayPosition position;
   final Widget overlayWidget;
-  final bool hideOnTapOutside;
+  final SimpleOverlayConfiguration? configuration;
+  final VoidCallback? onShowOverlay;
+  final VoidCallback? onHideOverlay;
 
   const SimpleOverlayWidget({
     super.key,
     required this.context,
-    required this.controller,
+    this.controller,
     required this.child,
     required this.position,
     required this.overlayWidget,
-    this.hideOnTapOutside = false,
+    this.configuration,
+    this.onShowOverlay,
+    this.onHideOverlay,
   });
 
   @override
@@ -26,8 +28,19 @@ class SimpleOverlayWidget extends StatefulWidget {
 }
 
 class _SimpleOverlayWidgetState extends State<SimpleOverlayWidget> {
+  final defaultController = SimpleOverlayController();
+  final defaultConfiguration = SimpleOverlayConfiguration();
+
   OverlayState? state;
   OverlayEntry? entry;
+
+  SimpleOverlayController get controller {
+    return widget.controller ?? defaultController;
+  }
+
+  SimpleOverlayConfiguration get configuration {
+    return widget.configuration ?? defaultConfiguration;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,19 +49,24 @@ class _SimpleOverlayWidgetState extends State<SimpleOverlayWidget> {
       entry = _buildOverlayEntry(
         context: context,
         overlayWidget: widget.overlayWidget,
-        hideOnTapOutside: widget.hideOnTapOutside,
+        hideOnTapOutside: configuration.hideOnTapOutside,
       );
 
       assert(state != null);
       assert(entry != null);
 
-      widget.controller.state.addListener(() {
-        if (widget.controller.state.value) {
+      controller.state.addListener(() {
+        if (controller.state.value) {
           _showOverlay(state!, entry!);
         } else {
           _hideOverlay(entry!);
         }
       });
+
+      if (configuration.startShowing) {
+        controller.show();
+        _showOverlay(state!, entry!);
+      }
     });
 
     return widget.child;
@@ -57,11 +75,20 @@ class _SimpleOverlayWidgetState extends State<SimpleOverlayWidget> {
   void _showOverlay(OverlayState state, OverlayEntry entry) {
     _hideOverlay(entry);
     state.insert(entry);
+
+    widget.onShowOverlay?.call();
+
+    if (configuration.autoHideDuration != null) {
+      Future.delayed(configuration.autoHideDuration!).then(
+        (_) => controller.hide(),
+      );
+    }
   }
 
   void _hideOverlay(OverlayEntry entry) {
     try {
       entry.remove();
+      widget.onHideOverlay?.call();
     } catch (_) {}
   }
 
@@ -91,7 +118,7 @@ class _SimpleOverlayWidgetState extends State<SimpleOverlayWidget> {
       return Stack(
         children: [
           GestureDetector(
-            onTap: hideOnTapOutside ? widget.controller.hide : null,
+            onTap: hideOnTapOutside ? controller.hide : null,
           ),
           Positioned(
             top: widget.position.bottom != null
@@ -115,10 +142,10 @@ class _SimpleOverlayWidgetState extends State<SimpleOverlayWidget> {
 
   @override
   void dispose() {
-    if (entry != null) {
-      _hideOverlay(entry!);
-    }
-    widget.controller.state.dispose();
+    if (entry != null) _hideOverlay(entry!);
+    controller.state.dispose();
+    state!.dispose();
+    entry!.dispose();
     super.dispose();
   }
 }

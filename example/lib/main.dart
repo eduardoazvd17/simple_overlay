@@ -7,90 +7,69 @@ void main() {
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
-  final overlayController = SimpleOverlayController();
+
+  final controller = SimpleOverlayController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('simple_overlay example')),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ElevatedButton(
-                onPressed: overlayController.show,
-                child: const Text("Show overlay's"),
-              ),
-            ],
+      body: Center(
+        child: SimpleOverlayWidget(
+          context: context,
+          controller: controller,
+          onShowOverlay: () {
+            // ignore: avoid_print
+            print('onShowOverlay');
+          },
+          onHideOverlay: () {
+            // ignore: avoid_print
+            print('onHideOverlay');
+          },
+          configuration: SimpleOverlayConfiguration(
+            startShowing: false,
+            hideOnTapOutside: false,
+            autoHideDuration: null,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              SimpleOverlayWidget(
-                context: context,
-                controller: overlayController,
-                hideOnTapOutside: false,
-                position: SimpleOverlayPosition.topRight(),
-                overlayWidget: _overlayWidget,
-                child: const Text('top right'),
-              ),
-              SimpleOverlayWidget(
-                context: context,
-                controller: overlayController,
-                hideOnTapOutside: false,
-                position: SimpleOverlayPosition.bottomRight(),
-                overlayWidget: _overlayWidget,
-                child: const Text('bottom right'),
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              SimpleOverlayWidget(
-                context: context,
-                controller: overlayController,
-                hideOnTapOutside: false,
-                position: SimpleOverlayPosition.topLeft(),
-                overlayWidget: _overlayWidget,
-                child: const Text('top left'),
-              ),
-              SimpleOverlayWidget(
-                context: context,
-                controller: overlayController,
-                hideOnTapOutside: false,
-                position: SimpleOverlayPosition.bottomLeft(),
-                overlayWidget: _overlayWidget,
-                child: const Text('bottom left'),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget get _overlayWidget {
-    return Card(
-      elevation: 8.0,
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Row(
-          children: [
-            const Text('Hello im a overlay widget'),
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: InkWell(
-                onTap: overlayController.hide,
-                child: const Icon(Icons.close),
-              ),
-            ),
-          ],
+          position: SimpleOverlayPosition.bottomRight(),
+          overlayWidget: _overlayWidget,
+          child: _child,
         ),
       ),
     );
   }
+
+  Widget get _overlayWidget => const Card(
+        child: Padding(
+          padding: EdgeInsets.all(10.0),
+          child: Text('simple_overlay'),
+        ),
+      );
+
+  Widget get _child => ValueListenableBuilder(
+        valueListenable: controller.state,
+        builder: (context, value, _) {
+          if (value) {
+            return ElevatedButton(
+              onPressed: controller.hide,
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(
+                  Colors.red,
+                ),
+              ),
+              child: const Text("Close"),
+            );
+          } else {
+            return ElevatedButton(
+              onPressed: controller.show,
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(
+                  Colors.green,
+                ),
+              ),
+              child: const Text("Open"),
+            );
+          }
+        },
+      );
 }

@@ -1,7 +1,7 @@
 name: simple_overlay
 description: A simple overlay library.
 version: 1.0.0
-homepage:
+homepage: https://github.com/eduardoazvd17/simple_overlay
 
 environment:
   sdk: '>=2.18.2 <3.0.0'

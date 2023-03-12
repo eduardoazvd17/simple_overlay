@@ -23,11 +23,41 @@ The simple and easy overlay package. With it, you can overlay a custom widget on
 - Custom background shadow color/opacity;
 
 ## Getting started
-
-TODO: Coming soon...
-
-## Usage
+1 - Import library on pubspec.yaml:
+```yaml
+dependencies:
+  simple_overlay: "^1.0.0"
+```
+2 - Add import for SimpleOverlay package on your file:
 ```dart
-// TODO: Coming soon...
-const like = 'sample';
+import 'package:simple_overlay/simple_overlay.dart';
+```
+3 - Creating SimpleOverlayWidget:
+```dart
+SimpleOverlayWidget(
+  controller: SimpleOverlayController(),
+  configuration: SimpleOverlayConfiguration(
+    startShowing: false,
+    hideOnTapOutside: true,
+    autoHideDuration: const Duration(seconds: 5),
+    shadowColor: Colors.black,
+    shadowOpacity: 0.5,
+    onShowOverlay: () {
+      // Called after show overlay widget
+    },
+    onHideOverlay: () {
+      // Called after hide overlay widget
+    },
+  ),
+  position: SimpleOverlayPosition.topLeft(),
+  overlayWidget: _overlayWidget,
+  child: _child,
+)
+```
+4 - Show/hide overlay manually:
+```dart
+final controller = SimpleOverlayController();
+...
+controller.show();
+controller.hide();
 ```

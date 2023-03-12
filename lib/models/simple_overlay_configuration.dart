@@ -20,7 +20,7 @@ class SimpleOverlayConfiguration {
   }) {
     if (shadowOpacity != null) {
       assert(
-        shadowOpacity! > 0.0 && shadowOpacity! < 1.0,
+        shadowOpacity! >= 0.0 && shadowOpacity! <= 1.0,
         'shadowOpacity property needs to be between 0.0 and 1.0',
       );
     }

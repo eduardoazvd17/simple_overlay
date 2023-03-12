@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import '../simple_overlay.dart';
 
@@ -65,7 +63,9 @@ class _SimpleOverlayWidgetState extends State<SimpleOverlayWidget> {
   }
 
   @override
-  Widget build(BuildContext context) => widget.child;
+  Widget build(BuildContext context) {
+    return widget.child;
+  }
 
   void _showOverlay() {
     _hideOverlay();
@@ -91,18 +91,18 @@ class _SimpleOverlayWidgetState extends State<SimpleOverlayWidget> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
 
+      final RenderBox? renderBox = context.findRenderObject() as RenderBox?;
+      if (renderBox == null) return;
+
+      final double screenHeight = MediaQuery.of(context).size.height;
+      final double screenWidth = MediaQuery.of(context).size.width;
+
+      final Size size = renderBox.size;
+      final Offset offset = renderBox.localToGlobal(Offset.zero);
+      final double y = (offset.dy + (size.height / 2));
+      final double x = (offset.dx + (size.width / 2));
+
       setState(() {
-        final RenderBox? renderBox = context.findRenderObject() as RenderBox?;
-        if (renderBox == null) return;
-
-        final double screenHeight = MediaQuery.of(context).size.height;
-        final double screenWidth = MediaQuery.of(context).size.width;
-
-        final Size size = renderBox.size;
-        final Offset offset = renderBox.localToGlobal(Offset.zero);
-        final double y = (offset.dy + (size.height / 2));
-        final double x = (offset.dx + (size.width / 2));
-
         entry = OverlayEntry(builder: (contextBuilder) {
           return Stack(
             children: [

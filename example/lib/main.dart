@@ -16,7 +16,6 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(title: const Text('simple_overlay example')),
       body: Center(
         child: SimpleOverlayWidget(
-          context: context,
           controller: controller,
           configuration: SimpleOverlayConfiguration(
             startShowing: false,

@@ -1,8 +1,9 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import '../simple_overlay.dart';
 
 class SimpleOverlayWidget extends StatefulWidget {
-  final BuildContext context;
   final SimpleOverlayController? controller;
   final Widget child;
   final SimpleOverlayPosition position;
@@ -11,7 +12,6 @@ class SimpleOverlayWidget extends StatefulWidget {
 
   const SimpleOverlayWidget({
     super.key,
-    required this.context,
     this.controller,
     required this.child,
     required this.position,
@@ -24,52 +24,52 @@ class SimpleOverlayWidget extends StatefulWidget {
 }
 
 class _SimpleOverlayWidgetState extends State<SimpleOverlayWidget> {
-  final defaultController = SimpleOverlayController();
-  final defaultConfiguration = SimpleOverlayConfiguration();
-
   OverlayState? state;
   OverlayEntry? entry;
 
+  final defaultController = SimpleOverlayController();
   SimpleOverlayController get controller {
     return widget.controller ?? defaultController;
   }
 
+  final defaultConfiguration = SimpleOverlayConfiguration();
   SimpleOverlayConfiguration get configuration {
     return widget.configuration ?? defaultConfiguration;
   }
 
   @override
-  Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      state = _buildOverlayState(context);
-      entry = _buildOverlayEntry(
-        context: context,
-        overlayWidget: widget.overlayWidget,
-      );
-
-      assert(state != null);
-      assert(entry != null);
-
-      controller.state.addListener(() {
-        if (controller.state.value) {
-          _showOverlay(state!, entry!);
-        } else {
-          _hideOverlay(entry!);
-        }
-      });
-
-      if (configuration.startShowing) {
-        controller.show();
-        _showOverlay(state!, entry!);
+  void initState() {
+    state = Overlay.of(context);
+    entry = _buildOverlayEntry(
+      overlayWidget: widget.overlayWidget,
+    );
+    controller.state.addListener(() {
+      if (controller.state.value) {
+        _showOverlay();
+      } else {
+        _hideOverlay();
       }
     });
-
-    return widget.child;
+    super.initState();
   }
 
-  void _showOverlay(OverlayState state, OverlayEntry entry) {
-    _hideOverlay(entry);
-    state.insert(entry);
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (configuration.startShowing) {
+        controller.show();
+        _showOverlay();
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
+
+  void _showOverlay() {
+    _hideOverlay();
+    state!.insert(entry!);
 
     configuration.onShowOverlay?.call();
 
@@ -80,70 +80,75 @@ class _SimpleOverlayWidgetState extends State<SimpleOverlayWidget> {
     }
   }
 
-  void _hideOverlay(OverlayEntry entry) {
+  void _hideOverlay() {
     try {
-      entry.remove();
+      entry!.remove();
       configuration.onHideOverlay?.call();
     } catch (_) {}
   }
 
-  OverlayState _buildOverlayState(BuildContext context) {
-    return Overlay.of(context);
-  }
+  OverlayEntry _buildOverlayEntry({required Widget overlayWidget}) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
 
-  OverlayEntry _buildOverlayEntry({
-    required BuildContext context,
-    required Widget overlayWidget,
-  }) {
-    final RenderBox? renderBox = context.findRenderObject() as RenderBox?;
-    assert(renderBox != null);
+      setState(() {
+        final RenderBox? renderBox = context.findRenderObject() as RenderBox?;
+        if (renderBox == null) return;
 
-    /// Screen size
-    final double screenHeight = MediaQuery.of(context).size.height;
-    final double screenWidth = MediaQuery.of(context).size.width;
+        final double screenHeight = MediaQuery.of(context).size.height;
+        final double screenWidth = MediaQuery.of(context).size.width;
 
-    /// Child position (center)
-    final Size size = renderBox!.size;
-    final Offset offset = renderBox.localToGlobal(Offset.zero);
-    final double y = (offset.dy + (size.height / 2));
-    final double x = (offset.dx + (size.width / 2));
+        final Size size = renderBox.size;
+        final Offset offset = renderBox.localToGlobal(Offset.zero);
+        final double y = (offset.dy + (size.height / 2));
+        final double x = (offset.dx + (size.width / 2));
 
-    return OverlayEntry(builder: (contextBuilder) {
-      return Stack(
-        children: [
-          GestureDetector(
-            onTap: configuration.hideOnTapOutside ? controller.hide : null,
-            child: configuration.shadowOpacity != null
-                ? Container(
-                    color: configuration.shadowColor.withOpacity(
-                      configuration.shadowOpacity!,
-                    ),
-                  )
-                : null,
-          ),
-          Positioned(
-            top: widget.position.bottom != null
-                ? (y + (size.height / 2) + widget.position.bottom!)
-                : null,
-            left: widget.position.right != null
-                ? (x + (size.width / 2) + widget.position.right!)
-                : null,
-            right: widget.position.left != null
-                ? (screenWidth - x + (size.width / 2) + widget.position.left!)
-                : null,
-            bottom: widget.position.top != null
-                ? (screenHeight - y + (size.height / 2) + widget.position.top!)
-                : null,
-            child: overlayWidget,
-          ),
-        ],
-      );
+        entry = OverlayEntry(builder: (contextBuilder) {
+          return Stack(
+            children: [
+              GestureDetector(
+                onTap: configuration.hideOnTapOutside ? controller.hide : null,
+                child: configuration.shadowOpacity != null
+                    ? Container(
+                        color: configuration.shadowColor.withOpacity(
+                          configuration.shadowOpacity!,
+                        ),
+                      )
+                    : null,
+              ),
+              Positioned(
+                top: widget.position.bottom != null
+                    ? (y + (size.height / 2) + widget.position.bottom!)
+                    : null,
+                left: widget.position.right != null
+                    ? (x + (size.width / 2) + widget.position.right!)
+                    : null,
+                right: widget.position.left != null
+                    ? (screenWidth -
+                        x +
+                        (size.width / 2) +
+                        widget.position.left!)
+                    : null,
+                bottom: widget.position.top != null
+                    ? (screenHeight -
+                        y +
+                        (size.height / 2) +
+                        widget.position.top!)
+                    : null,
+                child: overlayWidget,
+              ),
+            ],
+          );
+        });
+      });
     });
+
+    return OverlayEntry(builder: (context) => Container());
   }
 
   @override
   void dispose() {
-    if (entry != null) _hideOverlay(entry!);
+    if (entry != null) _hideOverlay();
     controller.state.dispose();
     state!.dispose();
     entry!.dispose();

@@ -26,7 +26,7 @@ The simple and easy overlay package. With it, you can overlay a custom widget on
 1 - Import library on pubspec.yaml:
 ```yaml
 dependencies:
-  simple_overlay: "^1.0.0"
+  simple_overlay: ^1.0.0
 ```
 2 - Add import for SimpleOverlay package on your file:
 ```dart

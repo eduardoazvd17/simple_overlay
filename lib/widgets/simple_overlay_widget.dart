@@ -88,7 +88,7 @@ class _SimpleOverlayWidgetState extends State<SimpleOverlayWidget> {
   }
 
   OverlayState _buildOverlayState(BuildContext context) {
-    return Overlay.of(context)!;
+    return Overlay.of(context);
   }
 
   OverlayEntry _buildOverlayEntry({

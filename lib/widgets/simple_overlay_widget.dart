@@ -48,7 +48,18 @@ class _SimpleOverlayWidgetState extends State<SimpleOverlayWidget> {
         _hideOverlay();
       }
     });
+
+    WidgetsBinding.instance.addObserver(_ResizeObserver(_handleWindowResize));
+
     super.initState();
+  }
+
+  void _handleWindowResize() {
+    setState(() {
+      entry = _buildOverlayEntry(
+        overlayWidget: widget.overlayWidget,
+      );
+    });
   }
 
   @override
@@ -152,6 +163,20 @@ class _SimpleOverlayWidgetState extends State<SimpleOverlayWidget> {
     controller.state.dispose();
     state!.dispose();
     entry!.dispose();
+
+    WidgetsBinding.instance
+        .removeObserver(_ResizeObserver(_handleWindowResize));
     super.dispose();
+  }
+}
+
+class _ResizeObserver extends WidgetsBindingObserver {
+  final VoidCallback callback;
+
+  _ResizeObserver(this.callback);
+
+  @override
+  void didChangeMetrics() {
+    callback();
   }
 }

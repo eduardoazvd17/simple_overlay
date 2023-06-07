@@ -131,22 +131,22 @@ class _SimpleOverlayWidgetState extends State<SimpleOverlayWidget> {
               ),
               Positioned(
                 top: widget.position.bottom != null
-                    ? (y + (size.height / 2) + widget.position.bottom!)
+                    ? ((y + size.height / 2) + widget.position.bottom!)
+                        .clamp(0, screenHeight - size.height - 15)
                     : null,
                 left: widget.position.right != null
-                    ? (x + (size.width / 2) + widget.position.right!)
+                    ? ((x + size.width / 2) + widget.position.right!)
+                        .clamp(0, screenWidth - size.width - 12)
                     : null,
                 right: widget.position.left != null
-                    ? (screenWidth -
-                        x +
-                        (size.width / 2) +
-                        widget.position.left!)
+                    ? ((screenWidth - x + size.width / 2) +
+                            widget.position.left!)
+                        .clamp(0, screenWidth - size.width - 12)
                     : null,
                 bottom: widget.position.top != null
-                    ? (screenHeight -
-                        y +
-                        (size.height / 2) +
-                        widget.position.top!)
+                    ? ((screenHeight - y + size.height / 2) +
+                            widget.position.top!)
+                        .clamp(0, screenHeight - size.height - 15)
                     : null,
                 child: overlayWidget,
               ),

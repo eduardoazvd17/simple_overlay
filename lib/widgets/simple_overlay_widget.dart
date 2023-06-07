@@ -49,7 +49,9 @@ class _SimpleOverlayWidgetState extends State<SimpleOverlayWidget> {
       }
     });
 
-    WidgetsBinding.instance.addObserver(_ResizeObserver(_handleWindowResize));
+    WidgetsBinding.instance.addObserver(
+      _ResizeObserver(_handleWindowResize),
+    );
 
     super.initState();
   }
@@ -164,8 +166,10 @@ class _SimpleOverlayWidgetState extends State<SimpleOverlayWidget> {
     state!.dispose();
     entry!.dispose();
 
-    WidgetsBinding.instance
-        .removeObserver(_ResizeObserver(_handleWindowResize));
+    WidgetsBinding.instance.removeObserver(
+      _ResizeObserver(_handleWindowResize),
+    );
+
     super.dispose();
   }
 }
